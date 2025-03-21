@@ -14,7 +14,7 @@ public class CommandDto {
     private String id;
 
     private EnterDto enter;
-    private GetDto get; // 'get' can't just be "get()" method or it conflicts with bean naming
+    private GetDto get;
 
     public String getId() {
         return id;

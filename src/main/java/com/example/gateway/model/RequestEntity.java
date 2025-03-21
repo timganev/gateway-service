@@ -11,14 +11,12 @@ public class RequestEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // We'll parse these out of the echo response
     private String requestId;
     private String producerId;
     private Long sessionId;
     private Long timestamp;
 
-    // We'll store these two directly from the original DTO
-    private String operationType; // e.g. "INSERT", "FIND"
+    private String operationType;
     private boolean jsonRequest;
 
     private Instant created;
@@ -26,8 +24,6 @@ public class RequestEntity {
     public RequestEntity() {
         this.created = Instant.now();
     }
-
-    // getters / setters
 
     public Long getId() {
         return id;

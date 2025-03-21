@@ -23,7 +23,7 @@ public class JsonApiController {
      */
     @PostMapping("/insert")
     public ResponseEntity<?> insert(@RequestBody UnifiedRequestDto dto) {
-        // Mark that it came from JSON
+
         dto.setJsonRequest(true);
         dto.setOperationType(OperationType.INSERT);
 
@@ -31,7 +31,7 @@ public class JsonApiController {
         if (!success) {
             return ResponseEntity.status(409).body("Duplicate requestId for this session");
         }
-        return ResponseEntity.ok().build(); // 200 OK no content
+        return ResponseEntity.ok().build();
     }
 
     /**
@@ -39,7 +39,7 @@ public class JsonApiController {
      */
     @PostMapping("/find")
     public ResponseEntity<?> find(@RequestBody UnifiedRequestDto dto) {
-        // Mark that it came from JSON
+
         dto.setJsonRequest(true);
         dto.setOperationType(OperationType.FIND);
 

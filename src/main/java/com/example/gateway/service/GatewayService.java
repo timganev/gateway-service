@@ -98,7 +98,6 @@ public class GatewayService {
             log.error("Could not parse echo response as JSON!", e);
         }
 
-        // store
         RequestEntity entity = new RequestEntity();
         entity.setOperationType(dto.getOperationType().name());
         entity.setJsonRequest(dto.isJsonRequest());

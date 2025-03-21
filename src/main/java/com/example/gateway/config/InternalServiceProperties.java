@@ -9,7 +9,6 @@ import java.util.Map;
 @ConfigurationProperties(prefix = "internal.service")
 public class InternalServiceProperties {
 
-    // This matches "internal.service.urls" in application.properties
     private Map<String, String> urls;
 
     public Map<String, String> getUrls() {

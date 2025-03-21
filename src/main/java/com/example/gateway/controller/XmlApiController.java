@@ -35,7 +35,6 @@ public class XmlApiController {
             consumes = MediaType.APPLICATION_XML_VALUE,
             produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> handleCommand(@RequestBody CommandDto cmd) {
-        // Convert CommandDto -> UnifiedRequestDto
         UnifiedRequestDto dto = convertCommandDtoToUnified(cmd);
         if (dto.getOperationType() == OperationType.INSERT) {
             boolean success = gatewayService.handleInsert(dto);
@@ -48,7 +47,7 @@ public class XmlApiController {
             if (requestIds.isEmpty()) {
                 return ResponseEntity.status(404).body("No requestIds found or session not found");
             }
-            return ResponseEntity.ok(requestIds); // could be returned as JSON or XML
+            return ResponseEntity.ok(requestIds);
         } else {
             return ResponseEntity.badRequest().body("Unknown operation in XML request");
         }
@@ -56,7 +55,7 @@ public class XmlApiController {
 
     private UnifiedRequestDto convertCommandDtoToUnified(CommandDto cmd) {
         UnifiedRequestDto dto = new UnifiedRequestDto();
-        dto.setJsonRequest(false); // came from XML
+        dto.setJsonRequest(false);
         dto.setRequestId(cmd.getId());
 
         EnterDto enter = cmd.getEnter();
