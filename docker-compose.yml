@@ -1,0 +1,55 @@
+
+
+services:
+  db-postgres:
+    image: postgres:15
+    container_name: "db-postgres"
+    environment:
+      POSTGRES_DB: "gateway_db"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+    ports:
+      - "5432:5432"
+    restart: always
+
+  redis:
+    image: redis:7
+    container_name: "redis"
+    environment:
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: "6379"
+    ports:
+      - "6379:6379"
+    restart: always
+
+  gateway1:
+    image: gateway-service:latest
+    container_name: gateway1
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db-postgres:5432/gateway_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: "6379"
+    ports:
+      - "8081:8080"   # assume your Spring Boot app runs on 8080 inside container
+    depends_on:
+      - db-postgres
+      - redis
+    restart: always
+
+  gateway2:
+    image: gateway-service:latest
+    container_name: gateway2
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db-postgres:5432/gateway_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: "6379"
+    ports:
+      - "8082:8080"
+    depends_on:
+      - db-postgres
+      - redis
+    restart: always
