@@ -3,10 +3,9 @@
 Този проект представлява фасадно (Gateway) Java/Spring Boot приложение, което:
 1. Приема **JSON** и **XML** заявки.
 2. Прави асинхронен REST call към [Postman Echo](https://postman-echo.com/post). Като в момента в application.properties симулираме 3 инстанции на (`OTHER_INTERNAL_SERVICE`):
-   # Internal Service
-     internal.service.urls.url1=https://postman-echo.com/post
-     internal.service.urls.url2=https://postman-echo.com/post
-     internal.service.urls.url3=https://postman-echo.com/post
+    - internal.service.urls.url1=https://postman-echo.com/post
+    - internal.service.urls.url2=https://postman-echo.com/post
+    - internal.service.urls.url3=https://postman-echo.com/post
 
 3. Съхранява резултатите в PostgreSQL база данни.
 4. Координира натоварването към `OTHER_INTERNAL_SERVICE` чрез Redis (използваме го за "load balancing" броячи).
