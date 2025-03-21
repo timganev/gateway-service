@@ -26,6 +26,7 @@ services:
     image: gateway-service:latest
     container_name: gateway1
     environment:
+      CONTAINER_NAME: "gateway1"
       SPRING_DATASOURCE_URL: jdbc:postgresql://db-postgres:5432/gateway_db
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
@@ -42,6 +43,7 @@ services:
     image: gateway-service:latest
     container_name: gateway2
     environment:
+      CONTAINER_NAME: "gateway2"
       SPRING_DATASOURCE_URL: jdbc:postgresql://db-postgres:5432/gateway_db
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres

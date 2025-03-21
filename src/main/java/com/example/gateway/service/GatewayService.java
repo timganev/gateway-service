@@ -1,11 +1,13 @@
 package com.example.gateway.service;
 
+import com.example.gateway.config.InternalServiceProperties;
 import com.example.gateway.dto.UnifiedRequestDto;
 import com.example.gateway.model.RequestEntity;
 import com.example.gateway.repository.RequestRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,18 +17,23 @@ import java.util.Map;
 @Service
 public class GatewayService {
 
+    @Value("${CONTAINER_NAME:unknown}")
+    private String containerName;
+
     private static final Logger log = LoggerFactory.getLogger(GatewayService.class);
 
     private final HttpService httpService;
     private final LoadBalancerService loadBalancerService;
     private final RequestRepository requestRepository;
+    private final InternalServiceProperties internalServiceProperties;
 
     public GatewayService(HttpService httpService,
                           LoadBalancerService loadBalancerService,
-                          RequestRepository requestRepository) {
+                          RequestRepository requestRepository, InternalServiceProperties internalServiceProperties) {
         this.httpService = httpService;
         this.loadBalancerService = loadBalancerService;
         this.requestRepository = requestRepository;
+        this.internalServiceProperties = internalServiceProperties;
     }
 
     public boolean handleInsert(UnifiedRequestDto dto) {
@@ -70,9 +77,10 @@ public class GatewayService {
     }
 
     private List<String> externalCallAndPersist(UnifiedRequestDto dto) {
-        String selectedUrl = loadBalancerService.acquireUrl();
+        String bestKey = loadBalancerService.acquireUrl();
+        String selectedUrl = internalServiceProperties.getUrls().get(bestKey);
         String response = httpService.postPayload(selectedUrl, dto);
-        loadBalancerService.releaseUrl(selectedUrl);
+        loadBalancerService.releaseUrl(bestKey);
 
         String parsedRequestId = null;
         String parsedProducerId = null;

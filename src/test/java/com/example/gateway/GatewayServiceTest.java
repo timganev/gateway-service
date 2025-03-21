@@ -1,5 +1,6 @@
 package com.example.gateway;
 
+import com.example.gateway.config.InternalServiceProperties;
 import com.example.gateway.dto.OperationType;
 import com.example.gateway.dto.UnifiedRequestDto;
 import com.example.gateway.model.RequestEntity;
@@ -15,6 +16,7 @@ import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -35,6 +37,9 @@ class GatewayServiceTest {
     @InjectMocks
     private GatewayService gatewayService;
 
+    @Mock
+    private InternalServiceProperties internalServiceProperties;
+
     @BeforeEach
     void setUp() {
         //
@@ -47,8 +52,12 @@ class GatewayServiceTest {
         dto.setOperationType(OperationType.INSERT);
         dto.setJsonRequest(true);
 
-        // Stub load balancer to return "http://test-url"
-        given(loadBalancerService.acquireUrl()).willReturn("http://test-url");
+
+        given(internalServiceProperties.getUrls()).willReturn(Map.of(
+                "url1", "http://test-url" // the real key-value
+        ));
+
+        given(loadBalancerService.acquireUrl()).willReturn("url1");
         // Stub the httpService so that it returns a valid echo response JSON (non-null content)
         String fakeEchoResponse = "{\n" +
                 "  \"json\": {\n" +
@@ -66,7 +75,7 @@ class GatewayServiceTest {
 
         // Then
         Assertions.assertTrue(result);
-        then(loadBalancerService).should().releaseUrl("http://test-url");
+        then(loadBalancerService).should().releaseUrl("url1");
         then(requestRepository).should().save(any(RequestEntity.class));
     }
 
@@ -101,9 +110,13 @@ class GatewayServiceTest {
         dto.setOperationType(OperationType.FIND);
         dto.setSessionId(111L);
 
+        given(internalServiceProperties.getUrls()).willReturn(Map.of(
+                "url1", "http://test-url" // the real key-value
+        ));
+
         given(requestRepository.existsBySessionId(111L)).willReturn(false);
         // Stub load balancer and httpService for external call
-        given(loadBalancerService.acquireUrl()).willReturn("http://test-url");
+        given(loadBalancerService.acquireUrl()).willReturn("url1");
         String fakeEchoResponse = "{\n" +
                 "  \"json\": {\n" +
                 "    \"requestId\": \"xyz-777\",\n" +
@@ -121,7 +134,7 @@ class GatewayServiceTest {
         // Then
         Assertions.assertFalse(result.isEmpty());
         Assertions.assertEquals("xyz-777", result.get(0));
-        then(loadBalancerService).should().releaseUrl("http://test-url");
+        then(loadBalancerService).should().releaseUrl("url1");
         then(requestRepository).should().save(any(RequestEntity.class));
     }
 }
